@@ -66,7 +66,7 @@ students = {
 }
 
 
-@app.post("/students_info/{student_id}")
+@app.get("/get_student/{student_id}")
 def get_student(student_id: int):
 
     if student_id not in students:
@@ -84,3 +84,31 @@ def get_student(student_id: int):
         "cgpa": student["cgpa"],
         "apptitude_score": student["apptitude_score"]
     }
+
+
+# query parameter 
+@app.get("/costumer_query")
+def costumer_query(costumer_id: int , costumer_name: str):
+
+    return {
+        'costumer_id': costumer_id,
+        "costumer_name": costumer_name
+    }
+
+employees = [
+    {"id": 101, "name": "Rahul Kumar", "city": "Delhi", "employee": "experienced"},
+    {"id": 102, "name": "gaurav Kumar", "city": "Mumbai", "employee": "fresher"},
+    {"id": 103, "name": "vivek Kumar", "city": "Bangalore", "employee": "experienced"},
+    {"id": 104, "name": "abhishek Kumar", "city": "Chennai", "employee": "fresher"},
+    {"id": 105, "name": "raju Kumar", "city": "Hyderabad", "employee": "fresher"}
+]
+
+@app.get("/get_student")
+def get_student(city: str , employee: str):
+
+    filtered_employee = [employe for employe in employees if employe["city"] == city and employe["employee"] == employee]
+
+    if not filtered_employee:
+        return {"message": f"No students found in {city} with {employee} status"}
+    
+    return {"employee": filtered_employee}
