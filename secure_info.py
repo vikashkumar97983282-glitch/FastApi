@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI,Header,HTTPException,Depends
 from pydantic import BaseModel,Field
 
 
@@ -47,3 +47,23 @@ def create_user(user: User):
     
     except Exception as e:
         return {"error": f"Internal server errror {str(e)}"}
+
+### create token verification function
+def verify_token(token: str = Header(None)):
+    if token != "mysecrettoken":
+        raise HTTPException(
+            status_code=401,
+            detail= "Unauthorized. Access denied!."
+        )
+    return {
+        "message": "Token verified successfully. Access granted."
+    }
+
+### secure data route
+@app.get("/secure-data")
+def secure_data(user = Depends(verify_token)):
+    
+    return {
+        "message": "This is secure data. You have access to it.",
+        "data": user    
+    }
