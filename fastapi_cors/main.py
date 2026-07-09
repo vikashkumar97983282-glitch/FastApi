@@ -98,3 +98,18 @@ async def register(user: userRegister):
         "id": str(data.inserted_id),
         "message":"user register successfully"
     }
+
+
+# @app.delete("/about/{id}")
+# async def remove(id: str):
+    
+#     result = await user_collection.delete_one({"id":id})
+
+#     if result.delete_count == 0:
+#         raise HTTPException(
+#             status_code=404,
+#             detail="user not found!"
+#         )
+#     return {
+#         "message":"user deleted successfully!"
+#     }

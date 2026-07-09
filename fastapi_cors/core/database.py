@@ -1,7 +1,14 @@
 from pymongo import AsyncMongoClient
+import os
+from dotenv import load_dotenv
 
-client = AsyncMongoClient("mongodb+srv://vkalpanasharma00_db_user:XJMdJxu50KJZ3ieK@cluster0.nml3k20.mongodb.net/")
+load_dotenv()
 
-db = client["mydatabase"]
+MONGO_URI = os.getenv("MONGO_URI")
+DATABASE = os.getenv("database_name")
+
+client = AsyncMongoClient(MONGO_URI)
+
+db = client[DATABASE]
 
 user_collection = db["users"]
