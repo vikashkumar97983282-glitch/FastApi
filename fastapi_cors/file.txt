@@ -1,0 +1,3 @@
+mongodb+srv://vkalpanasharma00_db_user:XJMdJxu50KJZ3ieK@cluster0.nml3k20.mongodb.net/
+
+mongodb+srv://vkalpanasharma00_db_user:<db_password>@cluster0.nml3k20.mongodb.net/?appName=Cluster0

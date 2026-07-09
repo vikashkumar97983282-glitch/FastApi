@@ -2,6 +2,11 @@ from fastapi import FastAPI,HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
+## local module
+from schemas.users_schema import userRegister,userLogin,userResponse
+
+from core.database import user_collection
+
 
 app = FastAPI()
 
@@ -30,25 +35,66 @@ def home():
     }
 
 
-@app.get("/info")
-def info():
-    return {
-        "message":"this is working",
-        "status":"successfull"
-    }
+@app.get("/about", response_model=list[userResponse])
+async def about():
 
-class Login(BaseModel):
-    email: str
-    password: str
+    users = await user_collection.find().to_list(length=None)
+
+    if not users:
+        raise HTTPException(
+            status_code=400,
+            detail="on users available"
+        )
+
+    result = []
+
+    for user in users:
+        result.append({
+            "id": str(user["_id"]),
+            "name": user["name"],
+            "email": user["email"]
+        })
+
+    return result
+
 
 @app.post("/login")
-def login(req : Login):
-    if req.email != "admin" or req.password != "password":
+async def login(user : userLogin):
+
+    existing_user = await user_collection.find_one({"email":user.email, "password":user.password})
+    if not existing_user:
         raise HTTPException(
             status_code=401,
             detail= "Unauthorized. Access denied!.",
         )
+    
+    existing_user["_id"] = str(existing_user["_id"])
+
     return {
         "message":"login successfull",
-        "access": True
+        "data": existing_user
+    }
+
+@app.post("/register")
+async def register(user: userRegister):
+
+    existing_user = await user_collection.find_one({"email":user.email})
+
+    if existing_user:
+        raise HTTPException(
+            status_code=400,
+            detail="Email Already exists"
+        )
+    
+    new_user = {
+        "name":user.name,
+        "email":user.email,
+        "password":user.password
+    }
+    
+    data = await user_collection.insert_one(new_user)
+
+    return {
+        "id": str(data.inserted_id),
+        "message":"user register successfully"
     }
